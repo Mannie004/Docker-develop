@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:11
+    env_file:
+      - .env-dev
+
+  person-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./person-service
+    depends_on:
+      - postgres
+    env_file:
+      - .env-dev
+    ports:
+      - 8080:8080
+    volumes:
+      - ./cache:/home/gradle/.gradle
+
+  webapp:
+    build:
+      dockerfile: Dockerfile
+      context: ./webapp
+    ports:
+      - 8000:80
+    depends_on:
+      - person-service
+
